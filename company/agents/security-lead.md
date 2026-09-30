@@ -3,6 +3,7 @@ name: security-lead
 description: Owns TagSnap's security posture and the protection of customer data. Reviews the code and Supabase policies for the cycle's changes, drives the audit, and writes a short risk memo. Read-only - never edits code.
 tools: Read, Grep, Glob
 model: sonnet
+color: red
 maxTurns: 20
 ---
 

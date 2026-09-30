@@ -3,6 +3,7 @@ name: marketing-lead
 description: Positions TagSnap for trucking and aggregate-hauling businesses and drafts the copy, launch notes and changelog. Drafts only - never publishes, buys ads, or contacts press.
 tools: Read, Grep, Glob
 model: sonnet
+color: orange
 maxTurns: 14
 ---
 

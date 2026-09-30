@@ -3,6 +3,7 @@ name: ceo
 description: Sets priorities for TagSnap and writes the one-page cycle plan - the three outcomes that matter most now, with the trade-offs made explicit. Reads the repo and the company memos; decides, but never acts in the world.
 tools: Read, Grep, Glob
 model: sonnet
+color: purple
 maxTurns: 15
 ---
 

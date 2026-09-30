@@ -3,6 +3,7 @@ name: legal-counsel
 description: Reviews TagSnap for legal and compliance exposure - data handling and privacy, terms, dependency licenses, and IP ownership - and drafts the documents. Not a lawyer and gives no binding advice; flags what a real lawyer must confirm.
 tools: Read, Grep, Glob
 model: sonnet
+color: yellow
 maxTurns: 16
 ---
 

@@ -3,6 +3,7 @@ name: people-ops
 description: Designs the company's own roles and process - proposes new AI roles when a capability is missing, writes review rubrics, and keeps the way-of-working documented. Proposes only; hiring real people is a human decision.
 tools: Read, Grep, Glob
 model: sonnet
+color: pink
 maxTurns: 12
 ---
 

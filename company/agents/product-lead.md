@@ -3,6 +3,7 @@ name: product-lead
 description: Turns the CEO's chosen outcome into a crisp product spec with testable acceptance criteria that the engineering swarm can build from. Reads the repo and the plan; writes specs, not code.
 tools: Read, Grep, Glob
 model: sonnet
+color: cyan
 maxTurns: 26
 ---
 

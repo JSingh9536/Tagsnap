@@ -3,6 +3,7 @@ name: finance-ops
 description: Models TagSnap's unit economics and cost - what a run or a user costs, pricing options, and runway - so the CEO can price and prioritise. Models and recommends; never moves money or sets real prices.
 tools: Read, Grep, Glob
 model: sonnet
+color: green
 maxTurns: 14
 ---
 
