@@ -102,7 +102,7 @@ private struct WrongPortalView: View {
                 .foregroundStyle(Theme.text)
                 .multilineTextAlignment(.center)
 
-            Text(body)
+            Text(message)
                 .font(.system(size: 17))
                 .foregroundStyle(Theme.muted)
                 .multilineTextAlignment(.center)
@@ -123,7 +123,7 @@ private struct WrongPortalView: View {
         actual == .office ? "This app is for the field" : "Wrong door"
     }
 
-    private var body: String {
+    private var message: String {
         switch actual {
         case .office:
             return """
