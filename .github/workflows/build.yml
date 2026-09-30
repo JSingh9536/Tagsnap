@@ -1,0 +1,102 @@
+name: build
+
+# Builds every part of TagSnap in the cloud. iOS needs macOS (it cannot build on Windows),
+# so that job runs on a macOS runner; everything else runs on Linux.
+#
+# NOTE: this workflow has not been run yet — it is committed ready for the first push to GitHub.
+# Secrets are not required to compile; the apps read Supabase config at runtime. The jobs pass
+# placeholder values so the build has something to substitute.
+
+on:
+  push:
+    branches: [main, master, "swarm/**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  shared:
+    name: shared parser (test + typecheck)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci || npm install
+      - name: test
+        working-directory: packages/shared
+        run: npm test
+      - name: typecheck
+        working-directory: packages/shared
+        run: npm run typecheck
+
+  web:
+    name: web app (build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci || npm install
+      - name: build
+        working-directory: apps/web
+        run: npm run build
+
+  android:
+    name: android (assembleDebug)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - uses: android-actions/setup-android@v3
+      - name: install SDK 35
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - uses: gradle/actions/setup-gradle@v4
+      - name: local.properties
+        working-directory: android
+        run: |
+          cp local.properties.example local.properties || true
+          {
+            echo "SUPABASE_URL=https://example.supabase.co"
+            echo "SUPABASE_ANON_KEY=ci-placeholder"
+          } >> local.properties
+      - name: assembleDebug
+        working-directory: android
+        # no committed wrapper yet, so use the gradle CLI from setup-gradle
+        run: gradle assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tagsnap-debug-apk
+          path: android/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: warn
+
+  ios:
+    name: ios (build, simulator)
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: xcodegen
+        run: brew install xcodegen
+      - name: Config.xcconfig
+        working-directory: ios
+        run: |
+          cp Config.example.xcconfig Config.xcconfig
+          {
+            echo "SUPABASE_URL = https:/\$()/example.supabase.co"
+            echo "SUPABASE_ANON_KEY = ci-placeholder"
+          } >> Config.xcconfig
+      - name: generate project
+        working-directory: ios
+        run: xcodegen generate
+      - name: build
+        working-directory: ios
+        run: |
+          xcodebuild build \
+            -project TagSnap.xcodeproj \
+            -scheme TagSnap \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            CODE_SIGNING_ALLOWED=NO
