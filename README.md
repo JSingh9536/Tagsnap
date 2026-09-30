@@ -133,15 +133,6 @@ until roughly 2,000 tickets, $25/month after — plus store fees.
 A small fleet runs this for **nothing per month** to start with. What that
 traded away, and what it bought, is in [docs/OCR.md](docs/OCR.md).
 
-## The five phone calls
-
-Still the highest-value thing on the list, and no code here changes it: call
-your top five quarries and ask whether they can send tickets digitally in any
-format. A yes from one high-volume quarry removes hundreds of photos a month
-from this pipeline permanently, and those tickets arrive as authoritative data
-from the vendor's own scale rather than a guess about what a photo says.
-See [`../Trucktags/docs/INGESTION.md`](../Trucktags/docs/INGESTION.md).
-
 The `tags.source` column is `driver_photo` today and exists so a quarry feed
 can be added later as another adapter writing into the same pipeline, rather
 than as a second system bolted alongside this one.
