@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleDisplayName</key>
+  <string>TagSnap</string>
+  <key>CFBundleShortVersionString</key>
+  <string>$(MARKETING_VERSION)</string>
+  <key>CFBundleVersion</key>
+  <string>$(CURRENT_PROJECT_VERSION)</string>
+
+  <!--
+    Filled from Config.xcconfig at build time so that the project URL and the
+    anon key are not committed. Neither is a secret — the anon key is published
+    by design and Row Level Security is what makes that safe — but a checked-in
+    key is a key that follows the repository into places nobody intended.
+  -->
+  <key>SUPABASE_URL</key>
+  <string>$(SUPABASE_URL)</string>
+  <key>SUPABASE_ANON_KEY</key>
+  <string>$(SUPABASE_ANON_KEY)</string>
+
+  <!--
+    Permission strings. Written as reasons rather than as requests, because
+    this is the only sentence a driver reads before deciding, and "TagSnap
+    would like to access the camera" persuades nobody.
+  -->
+  <key>NSCameraUsageDescription</key>
+  <string>To photograph scale tickets. The photo is the evidence for what you are paid, so it is kept with the ticket permanently.</string>
+
+  <key>NSLocationWhenInUseUsageDescription</key>
+  <string>To record which quarry a ticket was photographed at. This fills in the quarry when the printed name is hard to read. Your location is only recorded at the moment you take a photo — you are not tracked.</string>
+
+  <key>NSPhotoLibraryAddUsageDescription</key>
+  <string>Only if you choose to keep a copy of a ticket photo in your own library.</string>
+
+  <key>NSFaceIDUsageDescription</key>
+  <string>To unlock TagSnap, so a phone left in a truck does not show your pay.</string>
+
+  <key>UILaunchScreen</key>
+  <dict>
+    <key>UIColorName</key>
+    <string>LaunchBackground</string>
+  </dict>
+
+  <key>UISupportedInterfaceOrientations</key>
+  <array>
+    <string>UIInterfaceOrientationPortrait</string>
+  </array>
+  <!-- Landscape on iPad, because the office occasionally reviews on one. -->
+  <key>UISupportedInterfaceOrientations~ipad</key>
+  <array>
+    <string>UIInterfaceOrientationPortrait</string>
+    <string>UIInterfaceOrientationPortraitUpsideDown</string>
+    <string>UIInterfaceOrientationLandscapeLeft</string>
+    <string>UIInterfaceOrientationLandscapeRight</string>
+  </array>
+
+  <key>UIBackgroundModes</key>
+  <array>
+    <string>remote-notification</string>
+  </array>
+
+  <!--
+    No exception domains. Everything this app talks to is the Supabase project
+    over TLS, and an ATS exception is how a debugging shortcut becomes a
+    shipped plaintext connection.
+  -->
+  <key>NSAppTransportSecurity</key>
+  <dict>
+    <key>NSAllowsArbitraryLoads</key>
+    <false/>
+  </dict>
+</dict>
+</plist>

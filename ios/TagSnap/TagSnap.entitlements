@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <!--
+    `development` for debug builds and TestFlight-adjacent installs;
+    `production` once it ships. Getting this wrong is the single most common
+    reason push "works on my machine and not on the tester's phone" — a token
+    minted in one environment is rejected by the other. The matching switch is
+    APNS_ENVIRONMENT in the edge function secrets.
+  -->
+  <key>aps-environment</key>
+  <string>development</string>
+</dict>
+</plist>
