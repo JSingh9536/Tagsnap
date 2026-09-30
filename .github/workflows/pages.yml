@@ -1,0 +1,48 @@
+name: deploy-web
+
+# Builds the TagSnap office web app (apps/web) and publishes it to GitHub Pages.
+# Requires: Settings -> Pages -> Source = "GitHub Actions", and two repo secrets
+# (VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY - the anon/publishable key, safe to expose).
+# The site serves at https://<user>.github.io/Tagsnap/ so the build uses that base path.
+
+on:
+  push:
+    branches: [main]
+    paths: ["apps/web/**", "packages/shared/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm ci || npm install
+      - name: build
+        working-directory: apps/web
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: |
+          npm run build -- --base=/Tagsnap/
+          cp dist/index.html dist/404.html   # SPA fallback so deep links + refresh work on Pages
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/web/dist
+      - id: deploy
+        uses: actions/deploy-pages@v4

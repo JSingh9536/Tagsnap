@@ -18,7 +18,7 @@ import { ROLE_LABEL } from '@tagsnap/shared';
 export default function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
         <Shell />
       </BrowserRouter>
     </AuthProvider>
