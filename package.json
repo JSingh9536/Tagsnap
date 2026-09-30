@@ -1,0 +1,35 @@
+{
+  "name": "tagsnap",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "setup": "node scripts/setup-local.mjs",
+    "db:config": "node scripts/configure-db.mjs",
+    "db:reset": "supabase db reset",
+    "db:push": "supabase db push",
+    "functions": "supabase functions serve --env-file supabase/.env",
+    "functions:deploy": "supabase functions deploy sign-image push-rescan",
+    "web": "npm run dev --workspace @tagsnap/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "db:start": "supabase start",
+    "db:link": "supabase link",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.47.10"
+  },
+  "devDependencies": {
+    "supabase": "^2.115.0",
+    "typescript": "~5.3.3"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "allowScripts": {
+    "esbuild@0.21.5": true
+  }
+}

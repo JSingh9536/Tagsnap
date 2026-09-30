@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Notification icons are drawn as a silhouette: Android throws away every colour
+  and keeps the alpha channel. Anything with detail turns into a grey blob in
+  the status bar, so this is one solid document shape and nothing else.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFF">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M6,2h8l4,4v14a2,2 0 0 1 -2,2H6a2,2 0 0 1 -2,-2V4a2,2 0 0 1 2,-2zM8,11h8v2H8zM8,15h5v2H8z" />
+</vector>

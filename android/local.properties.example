@@ -1,0 +1,11 @@
+# Copy to local.properties. That file is gitignored by every Android project
+# template and by ours.
+#
+# sdk.dir is written by Android Studio the first time it opens the project;
+# only add it by hand if you are building from the command line on a machine
+# where Studio has never run.
+
+# sdk.dir=/Users/you/Library/Android/sdk
+
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-anon-key

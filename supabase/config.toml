@@ -1,0 +1,73 @@
+project_id = "tagsnap"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage"]
+extra_search_path = ["public", "extensions"]
+max_rows = 500
+
+[db]
+port = 54322
+major_version = 15
+
+[studio]
+enabled = true
+port = 54323
+
+[storage]
+enabled = true
+# A phone JPEG resized to 2000px wide lands around 1-2 MB. The cap is well
+# above that so a genuinely large ticket photo is not silently rejected in a
+# quarry parking lot.
+file_size_limit = "15MiB"
+
+[auth]
+enabled = true
+site_url = "http://localhost:5173"
+additional_redirect_urls = ["tagsnap://"]
+
+# Drivers get a long session because re-authenticating in a dead zone is a
+# support call. The office console gets a short one enforced separately —
+# those accounts can move money.
+jwt_expiry = 3600
+enable_refresh_token_rotation = true
+refresh_token_reuse_interval = 10
+
+[auth.email]
+enable_signup = false          # accounts are provisioned by the office
+enable_confirmations = false
+
+[auth.sms]
+enable_signup = false
+enable_confirmations = true
+
+# Phone OTP is the driver path. Wire a real provider before shipping; the
+# local stack prints the code to the console instead of sending it.
+[auth.sms.twilio]
+enabled = false
+account_sid = ""
+message_service_sid = ""
+auth_token = "env(TWILIO_AUTH_TOKEN)"
+
+[auth.mfa]
+max_enrolled_factors = 3
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
+# extract-tag is retired — see supabase/functions/.retired/. Reading happens on
+# the phone now, so there is no server-side extractor to gate.
+
+[functions.sign-image]
+verify_jwt = true
+
+# push-rescan does its own check rather than relying on this one.
+#
+# `verify_jwt` is satisfied by any valid key for the project, and the
+# publishable key ships inside both apps — so for an endpoint only the database
+# should reach, the gateway cannot tell the difference. isServiceRole() in
+# _shared/http.ts can. Left true as an outer layer; the real control is inside.
+[functions.push-rescan]
+verify_jwt = true

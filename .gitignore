@@ -1,0 +1,38 @@
+# secrets — see docs/SETUP.md
+.env
+.env.*
+!.env.example
+*service-account*.json
+*credentials*.json
+google-*.json
+supabase/.env
+supabase/.env.secrets
+ios/Config.xcconfig
+android/local.properties
+android/app/google-services.json
+
+node_modules/
+.expo/
+.expo-shared/
+dist/
+build/
+*.tsbuildinfo
+
+# EAS build artifacts
+*.ipa
+*.apk
+*.aab
+
+# real tag photos contain customer, job, and pricing data
+samples/
+fixtures/tags/*
+!fixtures/tags/.gitkeep
+
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# parser test bundle
+packages/shared/.test-build/

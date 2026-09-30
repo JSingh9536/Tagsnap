@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      A bare shell. Everything visible is Compose; this exists so the window
+      has the right background before the first frame, which is the difference
+      between the app opening and the app flashing white at 5 a.m.
+    -->
+    <style name="Theme.TagSnap" parent="android:Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/background</item>
+    </style>
+</resources>

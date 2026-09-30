@@ -1,0 +1,97 @@
+# XcodeGen project definition.
+#
+#   brew install xcodegen
+#   cd ios && xcodegen generate && open TagSnap.xcodeproj
+#
+# The .xcodeproj is generated rather than committed. That file is a 3,000-line
+# plist that every branch edits and nobody can review, and regenerating it from
+# this ten-line description removes an entire category of merge conflict.
+#
+# Nothing here pulls a dependency. The app uses Vision, VisionKit, SwiftUI,
+# SQLite, CoreLocation, LocalAuthentication and URLSession — all of which ship
+# with iOS — so a clean checkout builds with no network access and no package
+# resolution step.
+
+name: TagSnap
+options:
+  bundleIdPrefix: com.tagsnap
+  deploymentTarget:
+    # iOS 16 rather than 17, deliberately. This runs on a phone that lives in a
+    # truck, and a five-year-old handset is normal in that world. The document
+    # scanner needs an A12 (iPhone XS and up) and falls back to the plain
+    # camera below that — see Features/DocumentScanner.swift.
+    iOS: "16.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+configs:
+  Debug: debug
+  Release: release
+
+# Project-wide settings live in these two files so that the anon key and the
+# project URL are not baked into a checked-in plist. Copy the example and fill
+# it in — see ios/README.md.
+configFiles:
+  Debug: Config.xcconfig
+  Release: Config.xcconfig
+
+targets:
+  TagSnap:
+    type: application
+    platform: iOS
+    sources:
+      - path: TagSnap
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: $(TAGSNAP_BUNDLE_ID)
+        PRODUCT_NAME: TagSnap
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        DEVELOPMENT_TEAM: $(TAGSNAP_TEAM_ID)
+        CODE_SIGN_ENTITLEMENTS: TagSnap/TagSnap.entitlements
+        INFOPLIST_FILE: TagSnap/Info.plist
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        ENABLE_USER_SCRIPT_SANDBOXING: YES
+        SWIFT_STRICT_CONCURRENCY: complete
+        OTHER_LDFLAGS: -lsqlite3
+      configs:
+        Release:
+          SWIFT_COMPILATION_MODE: wholemodule
+          # Symbols are uploaded, not shipped. A crash report from a driver's
+          # phone should be symbolicated by us, not readable by whoever pulls
+          # the IPA apart.
+          DEBUG_INFORMATION_FORMAT: dwarf-with-dsym
+    dependencies:
+      - sdk: Vision.framework
+      - sdk: VisionKit.framework
+      - sdk: CoreLocation.framework
+      - sdk: LocalAuthentication.framework
+      - sdk: UserNotifications.framework
+
+  TagSnapTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [TagSnapTests]
+    dependencies:
+      - target: TagSnap
+    settings:
+      base:
+        SWIFT_VERSION: "5.9"
+        GENERATE_INFOPLIST_FILE: YES
+
+schemes:
+  TagSnap:
+    build:
+      targets:
+        TagSnap: all
+        TagSnapTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets: [TagSnapTests]
+    archive:
+      config: Release

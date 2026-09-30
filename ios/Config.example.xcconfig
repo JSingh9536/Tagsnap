@@ -1,0 +1,20 @@
+// Copy to Config.xcconfig and fill in. Config.xcconfig is gitignored.
+//
+//   cp Config.example.xcconfig Config.xcconfig
+//
+// Nothing here is a secret. The anon key is published by design — it names the
+// project and grants nothing on its own, because every policy in 002_rls.sql
+// decides what a request may actually do. Assume it is extracted from the IPA
+// on day one, because it will be.
+//
+// The key that *would* matter, the service role key, exists only in the edge
+// function environment and appears in no app target on either platform.
+
+SUPABASE_URL = https:/$()/your-project.supabase.co
+SUPABASE_ANON_KEY = your-anon-key
+
+// Your Apple Developer team, and the bundle id you registered.
+// The bundle id must match APNS_BUNDLE_ID in the edge function secrets, or
+// Apple rejects every push with a 400.
+TAGSNAP_TEAM_ID = ABCDE12345
+TAGSNAP_BUNDLE_ID = com.tagsnap.field

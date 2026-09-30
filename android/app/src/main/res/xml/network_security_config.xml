@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Cleartext off everywhere, with no exceptions. Everything this app talks to is
+  the Supabase project over TLS, and a debugging exception is how a shortcut
+  becomes a shipped plaintext connection carrying somebody's pay records.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>

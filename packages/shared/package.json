@@ -1,0 +1,14 @@
+{
+  "name": "@tagsnap/shared",
+  "version": "0.1.0",
+  "private": true,
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "esbuild test/parse.test.ts --bundle --platform=node --format=esm --external:node:* --outfile=.test-build/parse.test.mjs --log-level=warning && node --test .test-build/parse.test.mjs"
+  },
+  "devDependencies": {
+    "typescript": "~5.3.3"
+  }
+}

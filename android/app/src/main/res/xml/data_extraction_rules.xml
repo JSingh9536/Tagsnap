@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Nothing leaves this device in a backup or a device-to-device transfer.
+
+  The outbox holds ticket photos and the encrypted session; both are either
+  transient or credentials, and neither belongs in a cloud backup of a personal
+  phone. The server copy is the record.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" />
+        <exclude domain="database" />
+        <exclude domain="sharedpref" />
+        <exclude domain="file" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="root" />
+    </device-transfer>
+</data-extraction-rules>

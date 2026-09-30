@@ -1,0 +1,1531 @@
+<title>TagSnap Scale Ticket Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+  /* ------------------------------------------------------------------
+     TagSnap — pitch deck
+     Palette taken from the world the app lives in: asphalt, concrete,
+     signal blue for company trucks, hi-vis amber for subhaulers. The two
+     lane colours are the same ones the app itself uses, so the deck and
+     the product read as one thing.
+     ------------------------------------------------------------------ */
+
+  :root {
+    --ink:      #141c24;
+    --ground:   #e9eced;
+    --surface:  #ffffff;
+    --sunk:     #dfe3e6;
+    --rule:     #c5ced5;
+    --muted:    #556673;
+    --faint:    #7c8b97;
+
+    --driver:   #10598f;   /* company drivers  → payroll */
+    --sub:      #9c5c00;   /* subhaulers       → accounts payable */
+    --good:     #23694a;
+    --alert:    #9e332f;
+
+    --driver-wash: rgba(16, 89, 143, 0.09);
+    --sub-wash:    rgba(156, 92, 0, 0.10);
+    --good-wash:   rgba(35, 105, 74, 0.10);
+    --alert-wash:  rgba(158, 51, 47, 0.09);
+
+    --shadow: 0 1px 2px rgba(20, 28, 36, .07), 0 8px 24px -12px rgba(20, 28, 36, .18);
+
+    --display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+    --body: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+
+  /* Three theme states, not two: an explicit choice stamps data-theme, and
+     the default "system" setting stamps nothing — so the media query has to
+     carry the un-stamped case on its own. Written flat rather than nested,
+     because CSS nesting is not worth betting the page's legibility on. */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink:     #eef2f5;
+      --ground:  #0f1720;
+      --surface: #18222e;
+      --sunk:    #131c26;
+      --rule:    #2e3e4f;
+      --muted:   #9db0c2;
+      --faint:   #778999;
+
+      --driver:  #55b2f8;
+      --sub:     #f2a83a;
+      --good:    #45c67c;
+      --alert:   #ea6663;
+
+      --driver-wash: rgba(85, 178, 248, 0.13);
+      --sub-wash:    rgba(242, 168, 58, 0.13);
+      --good-wash:   rgba(69, 198, 124, 0.12);
+      --alert-wash:  rgba(234, 102, 99, 0.12);
+
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px -12px rgba(0, 0, 0, .6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ink:     #eef2f5;
+    --ground:  #0f1720;
+    --surface: #18222e;
+    --sunk:    #131c26;
+    --rule:    #2e3e4f;
+    --muted:   #9db0c2;
+    --faint:   #778999;
+
+    --driver:  #55b2f8;
+    --sub:     #f2a83a;
+    --good:    #45c67c;
+    --alert:   #ea6663;
+
+    --driver-wash: rgba(85, 178, 248, 0.13);
+    --sub-wash:    rgba(242, 168, 58, 0.13);
+    --good-wash:   rgba(69, 198, 124, 0.12);
+    --alert-wash:  rgba(234, 102, 99, 0.12);
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px -12px rgba(0, 0, 0, .6);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---------------------------------------------------------- structure */
+
+  .deck { display: flex; flex-direction: column; }
+
+  .slide {
+    padding: 76px 32px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .slide--alt { background: var(--surface); }
+
+  .inner {
+    max-width: 1060px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  .inner--narrow { max-width: 760px; }
+
+  /* The number is real information: this is a deck and the order is the
+     argument. It is not decoration hung on unordered sections. */
+  .eyebrow {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .eyebrow b {
+    font-family: var(--mono);
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .eyebrow::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+
+  h1 {
+    font-size: clamp(44px, 7vw, 82px);
+    font-weight: 800;
+    line-height: 0.98;
+    letter-spacing: -0.028em;
+  }
+  h2 {
+    font-size: clamp(28px, 3.6vw, 40px);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+  }
+
+  p { margin: 0; max-width: 66ch; }
+  .lede { font-size: clamp(18px, 2vw, 21px); color: var(--muted); line-height: 1.5; }
+  .muted { color: var(--muted); }
+  .small { font-size: 14.5px; line-height: 1.55; }
+  .tiny  { font-size: 13px; line-height: 1.5; color: var(--faint); }
+
+  a { color: var(--driver); }
+  code {
+    font-family: var(--mono);
+    font-size: .92em;
+    background: var(--sunk);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ------------------------------------------------------------- cover */
+
+  .cover {
+    background: var(--surface);
+    padding: clamp(64px, 10vh, 120px) 32px;
+    border-bottom: 3px solid var(--ink);
+  }
+  .cover .inner { gap: 34px; }
+
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .wordmark .chip {
+    width: 11px; height: 11px;
+    background: var(--sub);
+  }
+
+  .coverGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr);
+    gap: 48px;
+    align-items: center;
+  }
+
+  .statRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    margin-top: 8px;
+  }
+  .stat {
+    flex: 1 1 160px;
+    padding: 18px 20px 4px 0;
+  }
+  .stat b {
+    display: block;
+    font-family: var(--display);
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat span { font-size: 13px; color: var(--muted); }
+
+  /* --------------------------------------------------------- components */
+
+  figure { margin: 0; display: flex; flex-direction: column; gap: 12px; }
+  .figwrap { overflow-x: auto; }
+  figure svg { display: block; max-width: 100%; height: auto; min-width: 800px; }
+  figcaption { font-size: 14px; color: var(--muted); max-width: 70ch; }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .slide--alt .card { background: var(--sunk); }
+  .card h3 { font-size: 16px; }
+  .card p { font-size: 14.5px; color: var(--muted); line-height: 1.55; }
+
+  /* A severity stripe encodes what the item is, so the grid reads at a
+     glance rather than needing to be read line by line. */
+  .card--driver { border-left: 3px solid var(--driver); }
+  .card--sub    { border-left: 3px solid var(--sub); }
+  .card--good   { border-left: 3px solid var(--good); }
+  .card--alert  { border-left: 3px solid var(--alert); }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+  }
+  .tablewrap { overflow-x: auto; }
+  th {
+    text-align: left;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--faint);
+    padding: 0 14px 10px 0;
+    border-bottom: 1px solid var(--rule);
+    white-space: nowrap;
+  }
+  td {
+    padding: 12px 14px 12px 0;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: baseline;
+  }
+  td:last-child, th:last-child { padding-right: 0; }
+  .num { text-align: right; font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  tfoot td { font-weight: 600; border-bottom: none; border-top: 2px solid var(--ink); }
+
+  .tag {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+  .tag--driver { background: var(--driver-wash); color: var(--driver); }
+  .tag--sub    { background: var(--sub-wash);    color: var(--sub); }
+  .tag--good   { background: var(--good-wash);   color: var(--good); }
+  .tag--alert  { background: var(--alert-wash);  color: var(--alert); }
+
+  /* ------------------------------------------------------- price panels */
+
+  .plans {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 18px;
+  }
+  .plan {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .slide--alt .plan { background: var(--sunk); }
+
+  /* One plan is the realistic one. Boldness spent here and nowhere else. */
+  .plan--lead { border-color: var(--sub); border-width: 2px; }
+
+  .plan__head {
+    padding: 18px 20px 14px;
+    border-bottom: 1px solid var(--rule);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .plan--lead .plan__head { background: var(--sub-wash); }
+  .plan__name {
+    font-family: var(--display);
+    font-size: 19px;
+    font-weight: 700;
+  }
+  .plan__scale { font-size: 13.5px; color: var(--muted); }
+  .plan__price {
+    font-family: var(--display);
+    font-size: 42px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.05;
+    margin-top: 8px;
+  }
+  .plan--lead .plan__price { color: var(--sub); }
+  .plan__per { font-size: 13px; color: var(--muted); font-family: var(--body); font-weight: 400; }
+
+  .plan__lines { list-style: none; margin: 0; padding: 14px 20px 18px; display: flex; flex-direction: column; gap: 9px; }
+  .plan__lines li {
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .plan__lines b {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    font-weight: 400;
+    white-space: nowrap;
+  }
+  .plan__foot {
+    margin-top: auto;
+    padding: 14px 20px;
+    border-top: 1px solid var(--rule);
+    font-size: 13.5px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .plan__foot b { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+  /* ------------------------------------------------------ product mocks */
+
+  .mockPair {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 22px;
+    align-items: start;
+  }
+
+  .mock {
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    overflow: hidden;
+    background: #16202b;
+    color: #eef3f8;
+    box-shadow: var(--shadow);
+    font-size: 14px;
+  }
+  .mock__bar {
+    padding: 8px 14px;
+    background: #1e2b3a;
+    border-bottom: 1px solid #2c3d4f;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #93a8bb;
+  }
+  .mock__body { padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+
+  .mock__reason {
+    background: rgba(242, 168, 58, .16);
+    border-left: 3px solid #f2a83a;
+    padding: 12px 14px;
+    border-radius: 3px;
+  }
+  .mock__reason strong { display: block; color: #f2a83a; font-size: 14px; }
+  .mock__reason span { font-size: 13.5px; color: #d3dfea; }
+
+  .mock__frame {
+    height: 128px;
+    border: 2px dashed #46596c;
+    border-radius: 4px;
+    display: grid;
+    place-items: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: .1em;
+    color: #7b90a4;
+    text-transform: uppercase;
+  }
+  .mock__shutter {
+    width: 54px; height: 54px;
+    border-radius: 50%;
+    border: 3px solid #f2a83a;
+    background: rgba(242,168,58,.25);
+    margin: 0 auto;
+  }
+  .mock__choices { display: flex; flex-direction: column; gap: 6px; }
+  .mock__choice {
+    border: 1px solid #2f4256;
+    border-radius: 3px;
+    padding: 8px 12px;
+    font-size: 13.5px;
+    color: #b9c9d8;
+  }
+  .mock__choice--on {
+    border-color: #f2a83a;
+    background: rgba(242,168,58,.13);
+    color: #f2a83a;
+    font-weight: 600;
+  }
+  .mock__btn {
+    background: #f2a83a;
+    color: #1a1200;
+    font-weight: 700;
+    text-align: center;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  /* A scale ticket, set the way scale tickets are actually printed. */
+  .ticket {
+    background: var(--sunk);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 18px 20px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.75;
+    box-shadow: var(--shadow);
+  }
+  .ticket .t__head {
+    display: flex; justify-content: space-between; gap: 12px;
+    border-bottom: 1px dashed var(--rule);
+    padding-bottom: 8px; margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .ticket .t__row { display: flex; justify-content: space-between; gap: 16px; }
+  .ticket .t__row span:first-child { color: var(--faint); }
+  .ticket .t__net {
+    border-top: 1px dashed var(--rule);
+    margin-top: 8px; padding-top: 8px;
+    font-weight: 600;
+  }
+
+  /* -------------------------------------------------------------- lists */
+
+  .checklist { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+  .checklist li {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .checklist .mark {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--faint);
+    padding-top: 3px;
+    font-variant-numeric: tabular-nums;
+  }
+  .checklist b { font-weight: 600; }
+  .checklist p { font-size: 14.5px; color: var(--muted); margin-top: 2px; }
+
+  .callout {
+    border-left: 3px solid var(--sub);
+    background: var(--sub-wash);
+    padding: 18px 22px;
+    border-radius: 0 4px 4px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .callout strong { font-family: var(--display); font-size: 17px; }
+
+  .split {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+  }
+
+  footer {
+    padding: 48px 32px 64px;
+    background: var(--surface);
+  }
+  footer .inner { gap: 14px; }
+
+  @media (max-width: 780px) {
+    .slide { padding: 56px 22px; }
+    .coverGrid { grid-template-columns: 1fr; gap: 32px; }
+    body { font-size: 16px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .plan, .card { transition: border-color .15s ease; }
+  }
+</style>
+
+<div class="deck">
+
+  <!-- ============================================================ cover -->
+  <section class="cover">
+    <div class="inner">
+      <div class="wordmark"><span class="chip"></span> TagSnap</div>
+
+      <div class="coverGrid">
+        <div style="display:flex; flex-direction:column; gap:24px;">
+          <h1>The scale ticket stops being paperwork.</h1>
+          <p class="lede">
+            A driver photographs the ticket at the scale. The office checks it
+            once and approves. It lands on the right person&rsquo;s invoice —
+            your driver&rsquo;s settlement or your subhauler&rsquo;s payable,
+            never mixed up.
+          </p>
+
+          <div class="statRow">
+            <div class="stat">
+              <b>$40</b>
+              <span>a month at 500 tickets</span>
+            </div>
+            <div class="stat">
+              <b>~2&nbsp;sec</b>
+              <span>to approve a clean ticket</span>
+            </div>
+            <div class="stat">
+              <b>0</b>
+              <span>numbers typed by hand</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ticket" aria-label="Example scale ticket">
+          <div class="t__head">
+            <span>VULCAN MATLS #0123</span>
+            <span>0847213</span>
+          </div>
+          <div class="t__row"><span>DATE</span><span>08/14/26 07:42</span></div>
+          <div class="t__row"><span>TRUCK</span><span>218</span></div>
+          <div class="t__row"><span>MATERIAL</span><span>#57 STONE</span></div>
+          <div class="t__row"><span>JOB</span><span>RT 42 WIDENING</span></div>
+          <div class="t__row"><span>GROSS</span><span>38.42 T</span></div>
+          <div class="t__row"><span>TARE</span><span>16.10 T</span></div>
+          <div class="t__row t__net"><span>NET</span><span>22.32 T</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 01 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="eyebrow"><b>01</b> Where the money goes</div>
+      <h2>Every ticket is typed by hand, and nobody can prove what it said.</h2>
+
+      <div class="split">
+        <div style="display:flex; flex-direction:column; gap:16px;">
+          <p>
+            Tickets ride around in a truck for a week, land in an envelope, and
+            somebody keys them into a spreadsheet. It works, right up until it
+            doesn&rsquo;t.
+          </p>
+          <ul class="checklist">
+            <li>
+              <span class="mark">01</span>
+              <div>
+                <b>The same ticket gets paid twice.</b>
+                <p>Nothing checks. It is the most common way money leaks out of a haul operation.</p>
+              </div>
+            </li>
+            <li>
+              <span class="mark">02</span>
+              <div>
+                <b>A digit gets transposed.</b>
+                <p>22.32 tons becomes 223.2, or 2.232. Nobody notices until the quarry&rsquo;s invoice arrives.</p>
+              </div>
+            </li>
+            <li>
+              <span class="mark">03</span>
+              <div>
+                <b>A driver disputes their settlement.</b>
+                <p>You have a spreadsheet cell. They have a memory. The paper is gone.</p>
+              </div>
+            </li>
+            <li>
+              <span class="mark">04</span>
+              <div>
+                <b>Subhauler pay and driver pay get tangled.</b>
+                <p>A vendor payable ends up in a payroll run, or the reverse.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:18px;">
+          <div class="card card--alert">
+            <h3>The hidden cost</h3>
+            <p>
+              At 500 tickets a month and two minutes each, keying them by hand
+              is roughly <b>17&nbsp;hours</b> — every month, forever, and the
+              errors survive it.
+            </p>
+          </div>
+          <div class="card card--good">
+            <h3>What changes</h3>
+            <p>
+              The photo becomes the evidence, permanently. Every number that
+              changes is attached to a person and a timestamp. A dispute is
+              answered in ten seconds by pulling the original ticket up next to
+              who touched it.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 02 -->
+  <section class="slide slide--alt">
+    <div class="inner">
+      <div class="eyebrow"><b>02</b> How it works</div>
+      <h2>Photograph it once. Everything after that is checking, not typing.</h2>
+
+      <figure>
+        <div class="figwrap">
+          <svg viewBox="0 0 1040 330" role="img"
+               aria-label="A scale ticket photo moves from the driver's phone to a reader, through automatic checks, to the office, and onto an invoice. Flagged tickets and rescan requests loop back.">
+            <defs>
+              <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5"
+                      markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+              </marker>
+              <marker id="arSub" viewBox="0 0 10 10" refX="9" refY="5"
+                      markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#c07a12"/>
+              </marker>
+            </defs>
+
+            <g font-family="IBM Plex Mono, monospace" font-size="10.5"
+               letter-spacing="1.4" fill="currentColor" opacity=".55">
+              <text x="25"  y="22">FIELD</text>
+              <text x="245" y="22">SERVER</text>
+              <text x="465" y="22">SERVER</text>
+              <text x="685" y="22">OFFICE</text>
+              <text x="905" y="22">BOOKS</text>
+            </g>
+
+            <g fill="none" stroke="currentColor" stroke-width="1.4">
+              <rect x="25"  y="46" width="170" height="86" rx="3"/>
+              <rect x="245" y="46" width="170" height="86" rx="3"/>
+              <rect x="465" y="46" width="170" height="86" rx="3"/>
+              <rect x="685" y="46" width="170" height="86" rx="3"/>
+            </g>
+            <rect x="905" y="46" width="110" height="86" rx="3"
+                  fill="none" stroke="#c07a12" stroke-width="2"/>
+
+            <g font-family="IBM Plex Sans, sans-serif" fill="currentColor">
+              <text x="110" y="80"  font-size="14" font-weight="600" text-anchor="middle">Driver photo</text>
+              <text x="110" y="100" font-size="11.5" text-anchor="middle" opacity=".7">saved instantly,</text>
+              <text x="110" y="116" font-size="11.5" text-anchor="middle" opacity=".7">signal or not</text>
+
+              <text x="330" y="80"  font-size="14" font-weight="600" text-anchor="middle">Read</text>
+              <text x="330" y="100" font-size="11.5" text-anchor="middle" opacity=".7">every field, each</text>
+              <text x="330" y="116" font-size="11.5" text-anchor="middle" opacity=".7">with a confidence</text>
+
+              <text x="550" y="80"  font-size="14" font-weight="600" text-anchor="middle">Checked</text>
+              <text x="550" y="100" font-size="11.5" text-anchor="middle" opacity=".7">duplicate? weights?</text>
+              <text x="550" y="116" font-size="11.5" text-anchor="middle" opacity=".7">rate on file?</text>
+
+              <text x="770" y="80"  font-size="14" font-weight="600" text-anchor="middle">A person looks</text>
+              <text x="770" y="100" font-size="11.5" text-anchor="middle" opacity=".7">photo beside</text>
+              <text x="770" y="116" font-size="11.5" text-anchor="middle" opacity=".7">the numbers</text>
+            </g>
+            <g font-family="IBM Plex Sans, sans-serif" fill="#c07a12">
+              <text x="960" y="82"  font-size="14" font-weight="600" text-anchor="middle">Invoice</text>
+              <text x="960" y="102" font-size="11.5" text-anchor="middle">frozen</text>
+            </g>
+
+            <g stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)" fill="none" color="currentColor">
+              <line x1="195" y1="89" x2="238" y2="89"/>
+              <line x1="415" y1="89" x2="458" y2="89"/>
+            </g>
+            <g stroke="#c07a12" stroke-width="2" marker-end="url(#arSub)" fill="none">
+              <line x1="855" y1="89" x2="898" y2="89"/>
+            </g>
+
+            <!-- the split: what the checks decide is whether a human is needed -->
+            <g fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)">
+              <path d="M 635 72 L 660 72 L 660 68 L 678 68"/>
+              <path d="M 635 108 L 660 108 L 660 112 L 678 112"/>
+            </g>
+
+            <g font-family="IBM Plex Mono, monospace" font-size="10.5"
+               fill="currentColor" opacity=".7" letter-spacing=".6"
+               text-anchor="middle">
+              <text x="660" y="40">clean</text>
+              <text x="660" y="146">flagged</text>
+            </g>
+
+            <!-- the rescan return path: the office can hand it back -->
+            <path d="M 720 132 L 720 200 L 110 200 L 110 136"
+                  fill="none" stroke="#c07a12" stroke-width="2"
+                  stroke-dasharray="6 5" marker-end="url(#arSub)"/>
+            <text x="415" y="192" font-family="IBM Plex Sans, sans-serif"
+                  font-size="12" fill="#c07a12" text-anchor="middle" font-weight="600">
+              can&#8217;t read it &#8594; the driver&#8217;s phone buzzes, with the reason
+            </text>
+
+            <line x1="25" y1="238" x2="1015" y2="238" stroke="currentColor" opacity=".2"/>
+
+            <g font-family="IBM Plex Sans, sans-serif" font-size="12.5"
+               fill="currentColor" opacity=".72">
+              <text x="25"  y="266" font-weight="600">Nothing is typed</text>
+              <text x="25"  y="286">The office corrects what is wrong and approves. Most tickets need neither.</text>
+              <text x="25"  y="312">Whoever photographed a ticket cannot approve it. Once approved, it is locked for everyone.</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>
+          The check step decides one thing only: whether a person needs to look.
+          It never decides whether to pay — that is always a human, and never
+          the same human who took the photo.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============================================================ 03 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="eyebrow"><b>03</b> When the photo is no good</div>
+      <h2>One button sends it back, and the driver sees why while they retake it.</h2>
+      <p class="lede">
+        This is the part that usually turns into a phone call. Here it is two
+        taps and no conversation.
+      </p>
+
+      <div class="mockPair">
+        <div class="mock">
+          <div class="mock__bar">Office &middot; send back for a rescan</div>
+          <div class="mock__body">
+            <div class="mock__choices">
+              <div class="mock__choice mock__choice--on">Can&rsquo;t read it</div>
+              <div class="mock__choice">Part of the ticket is cut off</div>
+              <div class="mock__choice">A needed field is missing</div>
+              <div class="mock__choice">Possible duplicate</div>
+            </div>
+            <div style="font-size:13px; color:#93a8bb;">
+              &ldquo;The net weight is under your thumb.&rdquo;
+            </div>
+            <div class="mock__btn">Send it back</div>
+          </div>
+        </div>
+
+        <div class="mock">
+          <div class="mock__bar">Driver&rsquo;s phone &middot; camera</div>
+          <div class="mock__body">
+            <div class="mock__reason">
+              <strong>Can&rsquo;t read it</strong>
+              <span>
+                Retake it in better light. Hold the ticket flat and keep your
+                shadow off it.
+              </span>
+            </div>
+            <div class="mock__frame">Line the ticket up</div>
+            <div class="mock__shutter"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <h3>The old photo is kept</h3>
+          <p>
+            The new one replaces it on screen but never destroys it. The first
+            photo is the evidence for whatever was already read off it.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Still one ticket</h3>
+          <p>
+            A retake attaches to the same ticket rather than creating a second
+            one — which is exactly the duplicate the system exists to prevent.
+          </p>
+        </div>
+        <div class="card">
+          <h3>No signal, no problem</h3>
+          <p>
+            Photos save to the phone the instant they are taken and send
+            themselves later. A quarry in a dead zone never blocks a driver.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 04 -->
+  <section class="slide slide--alt">
+    <div class="inner">
+      <div class="eyebrow"><b>04</b> Two books</div>
+      <h2>Your drivers and your subhaulers never end up on the same invoice.</h2>
+      <p class="lede">
+        The app asks which one you are before it asks anything else, and the
+        answer follows the ticket all the way to the payment.
+      </p>
+
+      <figure>
+        <div class="figwrap">
+          <svg viewBox="0 0 1040 300" role="img"
+               aria-label="Tickets split by who is owed: company drivers go to a settlement and then payroll, subhaulers go to a payable and then accounts payable. The two never merge.">
+            <defs>
+              <marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5"
+                      markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+              </marker>
+              <marker id="arD" viewBox="0 0 10 10" refX="9" refY="5"
+                      markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#1f74b5"/>
+              </marker>
+              <marker id="arS" viewBox="0 0 10 10" refX="9" refY="5"
+                      markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#c07a12"/>
+              </marker>
+            </defs>
+
+            <rect x="20" y="112" width="150" height="72" rx="3"
+                  fill="none" stroke="currentColor" stroke-width="1.4"/>
+            <text x="95" y="144" font-family="IBM Plex Sans, sans-serif" font-size="14"
+                  font-weight="600" text-anchor="middle" fill="currentColor">Approved</text>
+            <text x="95" y="163" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  text-anchor="middle" fill="currentColor" opacity=".7">tickets</text>
+
+            <path d="M 170 132 L 205 132 L 205 74 L 248 74" fill="none"
+                  stroke="#1f74b5" stroke-width="2" marker-end="url(#arD)"/>
+            <path d="M 170 164 L 205 164 L 205 222 L 248 222" fill="none"
+                  stroke="#c07a12" stroke-width="2" marker-end="url(#arS)"/>
+
+            <!-- driver lane -->
+            <rect x="252" y="42" width="200" height="64" rx="3"
+                  fill="none" stroke="#1f74b5" stroke-width="2"/>
+            <text x="352" y="68" font-family="IBM Plex Sans, sans-serif" font-size="14"
+                  font-weight="600" text-anchor="middle" fill="#1f74b5">Company driver</text>
+            <text x="352" y="88" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  text-anchor="middle" fill="#1f74b5" opacity=".85">paid per your rate schedule</text>
+
+            <line x1="452" y1="74" x2="500" y2="74" stroke="#1f74b5" stroke-width="2" marker-end="url(#arD)"/>
+
+            <rect x="504" y="42" width="200" height="64" rx="3"
+                  fill="none" stroke="#1f74b5" stroke-width="2"/>
+            <text x="604" y="68" font-family="IBM Plex Sans, sans-serif" font-size="14"
+                  font-weight="600" text-anchor="middle" fill="#1f74b5">Driver settlement</text>
+            <text x="604" y="88" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  text-anchor="middle" fill="#1f74b5" opacity=".85">one per driver, per period</text>
+
+            <line x1="704" y1="74" x2="752" y2="74" stroke="#1f74b5" stroke-width="2" marker-end="url(#arD)"/>
+            <text x="880" y="70" font-family="Archivo, sans-serif" font-size="19"
+                  font-weight="700" text-anchor="middle" fill="#1f74b5">PAYROLL</text>
+            <text x="880" y="90" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  text-anchor="middle" fill="currentColor" opacity=".65">your existing process</text>
+
+            <!-- subhauler lane -->
+            <rect x="252" y="190" width="200" height="64" rx="3"
+                  fill="none" stroke="#c07a12" stroke-width="2"/>
+            <text x="352" y="216" font-family="IBM Plex Sans, sans-serif" font-size="14"
+                  font-weight="600" text-anchor="middle" fill="#c07a12">Subhauler</text>
+            <text x="352" y="236" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  text-anchor="middle" fill="#c07a12" opacity=".85">owed to the outfit, not the driver</text>
+
+            <line x1="452" y1="222" x2="500" y2="222" stroke="#c07a12" stroke-width="2" marker-end="url(#arS)"/>
+
+            <rect x="504" y="190" width="200" height="64" rx="3"
+                  fill="none" stroke="#c07a12" stroke-width="2"/>
+            <text x="604" y="216" font-family="IBM Plex Sans, sans-serif" font-size="14"
+                  font-weight="600" text-anchor="middle" fill="#c07a12">Subhauler payable</text>
+            <text x="604" y="236" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  text-anchor="middle" fill="#c07a12" opacity=".85">one per outfit, per period</text>
+
+            <line x1="704" y1="222" x2="752" y2="222" stroke="#c07a12" stroke-width="2" marker-end="url(#arS)"/>
+            <text x="880" y="218" font-family="Archivo, sans-serif" font-size="19"
+                  font-weight="700" text-anchor="middle" fill="#c07a12">ACCOUNTS PAYABLE</text>
+            <text x="880" y="238" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  text-anchor="middle" fill="currentColor" opacity=".65">your existing process</text>
+
+            <!-- the barrier: this is the claim of the whole figure -->
+            <line x1="200" y1="148" x2="1020" y2="148"
+                  stroke="currentColor" stroke-width="1.2" stroke-dasharray="3 6" opacity=".45"/>
+            <text x="1016" y="142" font-family="IBM Plex Mono, monospace" font-size="10"
+                  text-anchor="end" fill="currentColor" opacity=".6" letter-spacing="1">
+              NOTHING CROSSES THIS LINE
+            </text>
+          </svg>
+        </div>
+        <figcaption>
+          The separation is built into the database, not into a screen. A ticket
+          cannot be written without saying who is owed, and an invoice cannot
+          hold both kinds — so the two books cannot be merged by mistake, by
+          anybody.
+        </figcaption>
+      </figure>
+
+      <div class="cards">
+        <div class="card card--driver">
+          <h3>Company drivers</h3>
+          <p>
+            Your employee, your truck. Their loads land on a settlement, priced
+            off your driver rate schedule.
+          </p>
+        </div>
+        <div class="card card--sub">
+          <h3>Subhaulers</h3>
+          <p>
+            An outside outfit. You owe <em>the outfit</em>, once, for what its
+            trucks moved — no matter which of their drivers was behind the
+            wheel that day.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Nobody sees the other</h3>
+          <p>
+            Two subhaulers can never see each other&rsquo;s tonnage or rates.
+            That is competitive information, and it is walled off structurally.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 05 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="eyebrow"><b>05</b> The controls</div>
+      <h2>Nine checks run on every ticket before anyone can approve it.</h2>
+      <p class="lede">
+        These are not warnings in a screen someone can click past. They are
+        rules in the database, which means they hold even against someone
+        deliberately working around the app.
+      </p>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Check</th>
+              <th>What it catches</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Same ticket number, same quarry</td>
+              <td class="muted">The same ticket submitted twice — the most common way money leaks</td>
+              <td><span class="tag tag--good">Built</span></td>
+            </tr>
+            <tr>
+              <td>Image fingerprint</td>
+              <td class="muted">The same paper ticket re-photographed at a different angle with the number changed</td>
+              <td><span class="tag tag--good">Built</span></td>
+            </tr>
+            <tr>
+              <td>Gross &minus; tare = net</td>
+              <td class="muted">A misread or altered digit. Three numbers checking each other, free</td>
+              <td><span class="tag tag--good">Built</span></td>
+            </tr>
+            <tr>
+              <td>Net vs the truck&rsquo;s legal capacity</td>
+              <td class="muted">Impossible loads, and 223.2 typed where 22.32 belongs</td>
+              <td><span class="tag tag--good">Built</span></td>
+            </tr>
+            <tr>
+              <td>Tare vs that truck&rsquo;s usual tare</td>
+              <td class="muted">A misread empty weight — tare barely changes, so it verifies itself</td>
+              <td><span class="tag tag--good">Built</span></td>
+            </tr>
+            <tr>
+              <td>Date inside the pay window</td>
+              <td class="muted">Backdating, and old tickets resurfacing after a period was paid</td>
+              <td><span class="tag tag--good">Built</span></td>
+            </tr>
+            <tr>
+              <td>A rate exists for this load</td>
+              <td class="muted">Silently paying zero, or paying last year&rsquo;s rate</td>
+              <td><span class="tag tag--good">Built</span></td>
+            </tr>
+            <tr>
+              <td>Submitter cannot approve</td>
+              <td class="muted">A driver approving their own pay. Enforced as a hard rule, not a convention</td>
+              <td><span class="tag tag--good">Built</span></td>
+            </tr>
+            <tr>
+              <td>Approved tickets are frozen</td>
+              <td class="muted">Quietly editing a paid amount after the fact. Nobody can — including admins</td>
+              <td><span class="tag tag--good">Built</span></td>
+            </tr>
+            <tr>
+              <td>Match against the quarry&rsquo;s own invoice</td>
+              <td class="muted">Everything above, proven against the counterparty&rsquo;s records</td>
+              <td><span class="tag tag--sub">Not yet</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <strong>The last one is the prize.</strong>
+        <p class="small">
+          The quarry already sends you a monthly invoice listing every ticket
+          number and tonnage. Match your tickets against it and anything that
+          reconciles is <em>proven</em> correct without a person ever looking.
+          Only the mismatches get attention — and those need attention anyway,
+          because a mismatch means either a misread or the quarry billed you
+          wrong. Either way it is money.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 06 -->
+  <section class="slide slide--alt">
+    <div class="inner">
+      <div class="eyebrow"><b>06</b> Options</div>
+      <h2>Four ways tickets can reach the system. Photos are the fallback, not the goal.</h2>
+      <p class="lede">
+        They all feed the same pipeline, so you can mix them — and add a better
+        one later without rebuilding anything.
+      </p>
+
+      <figure>
+        <div class="figwrap">
+          <svg viewBox="0 0 1040 336" role="img"
+               aria-label="Four ways tickets enter: a quarry digital feed with no review, an office batch scanner, driver photos, and manual entry. All converge on the same checks, approval, and invoice.">
+            <defs>
+              <marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5"
+                      markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+              </marker>
+              <marker id="arG" viewBox="0 0 10 10" refX="9" refY="5"
+                      markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#2c8558"/>
+              </marker>
+            </defs>
+
+            <text x="20" y="26" font-family="IBM Plex Mono, monospace" font-size="10.5"
+                  letter-spacing="1.4" fill="currentColor" opacity=".55">HOW TICKETS GET IN</text>
+            <text x="700" y="26" font-family="IBM Plex Mono, monospace" font-size="10.5"
+                  letter-spacing="1.4" fill="currentColor" opacity=".55">ONE PIPELINE</text>
+
+            <!-- option A: the best one, leaned into -->
+            <rect x="20" y="44" width="290" height="56" rx="3"
+                  fill="none" stroke="#2c8558" stroke-width="2.2"/>
+            <text x="36" y="68" font-family="IBM Plex Sans, sans-serif" font-size="14"
+                  font-weight="600" fill="#2c8558">A &nbsp;Quarry sends a digital file</text>
+            <text x="36" y="87" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  fill="#2c8558" opacity=".9">no photo, no reading, nothing to review</text>
+
+            <rect x="20" y="112" width="290" height="56" rx="3"
+                  fill="none" stroke="currentColor" stroke-width="1.4"/>
+            <text x="36" y="136" font-family="IBM Plex Sans, sans-serif" font-size="14"
+                  font-weight="600" fill="currentColor">B &nbsp;Office desk scanner</text>
+            <text x="36" y="155" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  fill="currentColor" opacity=".7">flat, evenly lit, dozens a minute</text>
+
+            <rect x="20" y="180" width="290" height="56" rx="3"
+                  fill="none" stroke="currentColor" stroke-width="1.4"/>
+            <text x="36" y="204" font-family="IBM Plex Sans, sans-serif" font-size="14"
+                  font-weight="600" fill="currentColor">C &nbsp;Driver photographs it</text>
+            <text x="36" y="223" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  fill="currentColor" opacity=".7">works everywhere &mdash; this is what is built</text>
+
+            <rect x="20" y="248" width="290" height="56" rx="3"
+                  fill="none" stroke="currentColor" stroke-width="1.4"
+                  stroke-dasharray="5 4" opacity=".6"/>
+            <text x="36" y="272" font-family="IBM Plex Sans, sans-serif" font-size="14"
+                  font-weight="600" fill="currentColor" opacity=".7">D &nbsp;Typed in by hand</text>
+            <text x="36" y="291" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  fill="currentColor" opacity=".55">the exception, not the routine</text>
+
+            <!-- converge -->
+            <g fill="none" stroke="currentColor" stroke-width="1.4" opacity=".75">
+              <path d="M 310 72  L 380 72  L 380 174"/>
+              <path d="M 310 140 L 380 140"/>
+              <path d="M 310 208 L 380 208 L 380 174"/>
+              <path d="M 310 276 L 380 276 L 380 174" opacity=".55"/>
+            </g>
+            <line x1="380" y1="174" x2="452" y2="174" stroke="currentColor"
+                  stroke-width="1.6" marker-end="url(#ar3)"/>
+
+            <rect x="456" y="142" width="150" height="64" rx="3"
+                  fill="none" stroke="currentColor" stroke-width="1.4"/>
+            <text x="531" y="170" font-family="IBM Plex Sans, sans-serif" font-size="14"
+                  font-weight="600" text-anchor="middle" fill="currentColor">Same checks</text>
+            <text x="531" y="189" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  text-anchor="middle" fill="currentColor" opacity=".7">all nine, every route</text>
+
+            <line x1="606" y1="174" x2="654" y2="174" stroke="currentColor"
+                  stroke-width="1.6" marker-end="url(#ar3)"/>
+
+            <rect x="658" y="142" width="150" height="64" rx="3"
+                  fill="none" stroke="currentColor" stroke-width="1.4"/>
+            <text x="733" y="170" font-family="IBM Plex Sans, sans-serif" font-size="14"
+                  font-weight="600" text-anchor="middle" fill="currentColor">Approval</text>
+            <text x="733" y="189" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  text-anchor="middle" fill="currentColor" opacity=".7">one person, one tap</text>
+
+            <line x1="808" y1="174" x2="856" y2="174" stroke="currentColor"
+                  stroke-width="1.6" marker-end="url(#ar3)"/>
+
+            <rect x="860" y="142" width="150" height="64" rx="3"
+                  fill="none" stroke="currentColor" stroke-width="1.4"/>
+            <text x="935" y="170" font-family="IBM Plex Sans, sans-serif" font-size="14"
+                  font-weight="600" text-anchor="middle" fill="currentColor">Invoice</text>
+            <text x="935" y="189" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  text-anchor="middle" fill="currentColor" opacity=".7">the right book</text>
+
+            <!-- option A skips the reading entirely: that is the whole point -->
+            <path d="M 310 60 L 700 60 L 700 138" fill="none" stroke="#2c8558"
+                  stroke-width="2.2" marker-end="url(#arG)"/>
+            <text x="505" y="52" font-family="IBM Plex Sans, sans-serif" font-size="12"
+                  font-weight="600" text-anchor="middle" fill="#2c8558">
+              already correct &#8212; skips reading and review entirely
+            </text>
+          </svg>
+        </div>
+        <figcaption>
+          Option A is the only route where a ticket needs no reading and no
+          reviewer, because the numbers come straight off the quarry&rsquo;s own
+          scale. Everything else converges on the same checks.
+        </figcaption>
+      </figure>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Option</th>
+              <th>What it takes</th>
+              <th class="num">Cost</th>
+              <th>Human effort per ticket</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>A &nbsp;Quarry digital feed</b></td>
+              <td class="muted">Five phone calls. Some quarries already do this and just hand your driver a paper copy too</td>
+              <td class="num">$0</td>
+              <td><span class="tag tag--good">None, ever</span></td>
+            </tr>
+            <tr>
+              <td><b>B &nbsp;Office desk scanner</b></td>
+              <td class="muted">A document scanner with a feeder. Drivers drop tickets in an envelope; the office feeds the stack</td>
+              <td class="num">~$400 once</td>
+              <td><span class="tag tag--good">One tap</span></td>
+            </tr>
+            <tr>
+              <td><b>C &nbsp;Driver photos</b></td>
+              <td class="muted">Nothing. This is what is built and it works at every quarry you haul from</td>
+              <td class="num">$0.02 ea.</td>
+              <td><span class="tag tag--driver">One tap, or a look</span></td>
+            </tr>
+            <tr>
+              <td><b>D &nbsp;Typed by hand</b></td>
+              <td class="muted">For the ticket that is torn in half. Always available, rarely needed</td>
+              <td class="num">$0</td>
+              <td><span class="tag tag--alert">A minute</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout">
+        <strong>Do option A first. It is free and it might delete the problem.</strong>
+        <p class="small">
+          Call your top five quarries and ask: <em>&ldquo;Do you have
+          e-ticketing, or can you send me a daily file of my tickets? CSV,
+          Excel, PDF, emailed, portal export — whatever you already
+          produce.&rdquo;</em> Ask about Command Alkon, HaulHub, or Trux by
+          name. One yes from a high-volume quarry removes hundreds of photos a
+          month permanently.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ 07 -->
+  <section class="slide">
+    <div class="inner">
+      <div class="eyebrow"><b>07</b> Running cost &mdash; monthly</div>
+      <h2>Between $3 and $104 a month, depending entirely on how many tickets you run.</h2>
+      <p class="lede">
+        Almost all of it scales with volume. The fixed part is $25.
+      </p>
+
+      <div class="plans">
+        <div class="plan">
+          <div class="plan__head">
+            <div class="plan__name">Pilot</div>
+            <div class="plan__scale">2&ndash;3 drivers &middot; ~150 tickets/mo</div>
+            <div class="plan__price">$3<span class="plan__per">/mo</span></div>
+          </div>
+          <ul class="plan__lines">
+            <li>Database <b>free tier</b></li>
+            <li>Reading tickets <b>$3.00</b></li>
+            <li>Text-message login <b>off</b></li>
+            <li>App builds <b>free tier</b></li>
+          </ul>
+          <div class="plan__foot">
+            <span class="muted">Per year</span><b>$36</b>
+          </div>
+        </div>
+
+        <div class="plan plan--lead">
+          <div class="plan__head">
+            <div class="plan__name">Small fleet</div>
+            <div class="plan__scale">8&ndash;12 drivers &amp; subs &middot; ~500 tickets/mo</div>
+            <div class="plan__price">$40<span class="plan__per">/mo</span></div>
+          </div>
+          <ul class="plan__lines">
+            <li>Database <b>$25.00</b></li>
+            <li>Reading tickets <b>$10.00</b></li>
+            <li>Text-message login <b>$5.00</b></li>
+            <li>App builds <b>free tier</b></li>
+          </ul>
+          <div class="plan__foot">
+            <span class="muted">Per year</span><b>$480</b>
+          </div>
+        </div>
+
+        <div class="plan">
+          <div class="plan__head">
+            <div class="plan__name">Growing</div>
+            <div class="plan__scale">30+ drivers &amp; subs &middot; ~2,000 tickets/mo</div>
+            <div class="plan__price">$104<span class="plan__per">/mo</span></div>
+          </div>
+          <ul class="plan__lines">
+            <li>Database + storage <b>$30.00</b></li>
+            <li>Reading tickets <b>$40.00</b></li>
+            <li>Text-message login <b>$15.00</b></li>
+            <li>App builds <b>$19.00</b></li>
+          </ul>
+          <div class="plan__foot">
+            <span class="muted">Per year</span><b>$1,248</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>What you are paying for</th>
+              <th>Who</th>
+              <th class="num">Rate</th>
+              <th>Can you skip it?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Reading the tickets</td>
+              <td class="muted">Anthropic</td>
+              <td class="num">$0.01&ndash;0.03 ea.</td>
+              <td class="muted">No &mdash; but it is the cheapest line here</td>
+            </tr>
+            <tr>
+              <td>Database, photo storage, logins</td>
+              <td class="muted">Supabase</td>
+              <td class="num">$0 or $25/mo</td>
+              <td class="muted">Free tier is fine until you want daily backups</td>
+            </tr>
+            <tr>
+              <td>Texting drivers a login code</td>
+              <td class="muted">Twilio</td>
+              <td class="num">~$5&ndash;15/mo</td>
+              <td class="muted">Yes &mdash; email and password works, just clumsier with gloves on</td>
+            </tr>
+            <tr>
+              <td>Building the app installers</td>
+              <td class="muted">Expo</td>
+              <td class="num">$0 or $19/mo</td>
+              <td class="muted">Free tier covers occasional builds</td>
+            </tr>
+            <tr>
+              <td>The office console&rsquo;s web hosting</td>
+              <td class="muted">Vercel or Netlify</td>
+              <td class="num">$0</td>
+              <td class="muted">Free tier is genuinely enough</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="tiny">
+        Ticket reading is billed per ticket, so a slow month costs less. Storage
+        grows about 3&nbsp;GB a month at 2,000 tickets; the $25 plan includes
+        100&nbsp;GB, so roughly three years before it matters.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 08 -->
+  <section class="slide slide--alt">
+    <div class="inner">
+      <div class="eyebrow"><b>08</b> Running cost &mdash; yearly</div>
+      <h2>The first year costs more than the ones after it, by about $124.</h2>
+
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Line</th>
+              <th class="num">Pilot</th>
+              <th class="num">Small fleet</th>
+              <th class="num">Growing</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Monthly running cost &times; 12</td>
+              <td class="num">$36</td>
+              <td class="num">$480</td>
+              <td class="num">$1,248</td>
+            </tr>
+            <tr>
+              <td>Apple Developer <span class="tiny">(every year)</span></td>
+              <td class="num">$99</td>
+              <td class="num">$99</td>
+              <td class="num">$99</td>
+            </tr>
+            <tr>
+              <td>Google Play <span class="tiny">(first year only)</span></td>
+              <td class="num">$25</td>
+              <td class="num">$25</td>
+              <td class="num">$25</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td>First year, all in</td>
+              <td class="num">$160</td>
+              <td class="num">$604</td>
+              <td class="num">$1,372</td>
+            </tr>
+            <tr>
+              <td>Every year after</td>
+              <td class="num">$135</td>
+              <td class="num">$579</td>
+              <td class="num">$1,347</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <p class="tiny">
+        A desk scanner is a separate, optional, one-time ~$400 &mdash; see
+        option&nbsp;B on the previous page. It is left out of the figures above
+        because most operations will not want one until volume justifies it.
+      </p>
+
+      <div class="split">
+        <div class="card card--good">
+          <h3>What it replaces</h3>
+          <p style="color: inherit;">
+            At 500 tickets a month and two minutes each, hand-keying is about
+            <b>17 hours a month</b>. At a loaded $22 an hour that is roughly
+            <b>$370 a month</b> of somebody&rsquo;s time — against $40 of
+            running cost.
+          </p>
+          <p class="tiny" style="margin-top:6px;">
+            The typing goes to zero. The checking does not, and should not — but
+            checking a pre-filled ticket is seconds, not minutes.
+          </p>
+        </div>
+        <div class="card">
+          <h3>And the thing you can&rsquo;t price</h3>
+          <p>
+            One duplicate ticket caught, or one settlement dispute answered from
+            the original photo instead of an argument, covers a year of this.
+            That is not a projection — it is what the checks are for.
+          </p>
+        </div>
+      </div>
+
+      <p class="tiny">
+        Estimates, not quotes. Ticket reading is metered by the provider and the
+        per-ticket figure depends on photo size; the rest are published list
+        prices as of writing. Nothing here has been billed yet.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================ 09 -->
+  <section class="slide">
+    <div class="inner inner--narrow">
+      <div class="eyebrow"><b>09</b> What happens next</div>
+      <h2>Six things, and four of them are free.</h2>
+
+      <ul class="checklist">
+        <li>
+          <span class="mark">01</span>
+          <div>
+            <b>Make the five phone calls.</b>
+            <p>
+              Ask your biggest quarries for a digital ticket file. Costs
+              nothing, takes an afternoon, and may remove entire quarries from
+              this system permanently.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="mark">02</span>
+          <div>
+            <b>Collect 20&ndash;50 real tickets.</b>
+            <p>
+              Deliberately including the faded, greasy, folded ones. Run them
+              through and count how often the net tonnage comes out right. That
+              one number decides how heavy the review step needs to be.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="mark">03</span>
+          <div>
+            <b>Open an Anthropic account and put $20 on it.</b>
+            <p>
+              That is roughly a thousand tickets — far more than you need to
+              decide whether this works. Set a $50 monthly spend limit while you
+              are in there.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="mark">04</span>
+          <div>
+            <b>Answer four questions.</b>
+            <p>
+              How driver pay is actually calculated. What a pay period is. Who
+              approves. Whether subhaulers are paid on the same basis as your
+              drivers. The system runs without these; it cannot go live without
+              them.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="mark">05</span>
+          <div>
+            <b>Run it on one week of real tickets.</b>
+            <p>
+              Alongside the current process, not instead of it. Compare the two
+              settlements at the end of the week. If they match, you are done
+              deciding.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="mark">06</span>
+          <div>
+            <b>Then buy the store accounts.</b>
+            <p>
+              $99 to Apple and $25 to Google, and only once the week above went
+              well. Everything before this point is free or nearly so.
+            </p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="callout">
+        <strong>Still to build</strong>
+        <p class="small">
+          Connecting your Google Sheets rate table and invoice export — about a
+          day&rsquo;s work, but it needs somebody to see the real sheet first.
+          A screen for editing rates. And matching against the quarry&rsquo;s
+          monthly invoice, which is the piece that eventually retires most of
+          the reviewing.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="inner">
+      <div class="wordmark"><span class="chip"></span> TagSnap</div>
+      <p class="small muted">
+        Built on the plan in the TruckTags documents. The apps and the database
+        are written; nothing has been run against real tickets yet. Setup
+        instructions and an honest list of what is still unbuilt are in the
+        project&rsquo;s <code>docs/SETUP.md</code>.
+      </p>
+    </div>
+  </footer>
+
+</div>

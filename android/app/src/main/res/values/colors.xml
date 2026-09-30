@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Kept in step with Theme.kt and the office console's styles.css. -->
+    <color name="background">#0F1720</color>
+    <color name="driver">#3FA7F5</color>
+</resources>

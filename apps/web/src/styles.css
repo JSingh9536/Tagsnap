@@ -1,0 +1,612 @@
+/*
+ * TagSnap Office.
+ *
+ * Built for the actual job: a person at a desk comparing a photographed carbon
+ * copy against a form, dozens of times in a sitting. That drives the two
+ * decisions that shape everything here — the image panel gets half the screen
+ * and never scrolls out of view, and confidence and arithmetic are shown
+ * inline so the reviewer never has to do mental math to spot a misread digit.
+ */
+
+:root {
+  --bg: #0f1720;
+  --surface: #18222e;
+  --raised: #22303f;
+  --border: #2e3e4f;
+
+  --text: #f2f6fa;
+  --muted: #9db0c2;
+  --faint: #67788a;
+
+  --driver: #3fa7f5;
+  --subhauler: #f5a623;
+
+  --good: #3fbf6f;
+  --attention: #f5a623;
+  --bad: #e5484d;
+  --pending: #7b8fa3;
+
+  --radius: 10px;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.muted { color: var(--muted); }
+.boot { display: grid; place-items: center; min-height: 100vh; }
+
+/* ------------------------------------------------------------------- nav */
+
+.app { min-height: 100vh; display: flex; flex-direction: column; }
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 0 24px;
+  height: 60px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex: none;
+}
+
+.nav__brand {
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--text);
+  text-decoration: none;
+}
+.nav__brand span { color: var(--driver); font-weight: 500; }
+
+.nav__links { display: flex; gap: 20px; flex: 1; }
+.nav__links a {
+  color: var(--muted);
+  text-decoration: none;
+  padding: 6px 0;
+  border-bottom: 2px solid transparent;
+}
+.nav__links a.on { color: var(--text); border-bottom-color: var(--driver); }
+
+.nav__user { display: flex; align-items: center; gap: 14px; }
+.nav__user span { display: flex; flex-direction: column; line-height: 1.25; }
+.nav__user em {
+  font-style: normal;
+  font-size: 12px;
+  color: var(--faint);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* --------------------------------------------------------------- buttons */
+
+.btn {
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--raised);
+  color: var(--text);
+  transition: filter 0.12s ease;
+}
+.btn:hover:not(:disabled) { filter: brightness(1.15); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.btn--primary { background: var(--driver); color: #0b1119; }
+.btn--approve { background: var(--good); color: #06180d; }
+.btn--warn { background: var(--attention); color: #1a1200; }
+.btn--danger { background: transparent; border-color: var(--bad); color: var(--bad); }
+.btn--ghost { background: transparent; border-color: var(--border); color: var(--muted); }
+
+/* -------------------------------------------------------------- sign in */
+
+.signin { display: grid; place-items: center; min-height: 100vh; padding: 24px; }
+.signin__card {
+  width: min(400px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.signin__card h1 { margin: 0; font-size: 26px; }
+.signin__card .btn { margin-top: 8px; }
+.footnote { color: var(--faint); font-size: 13px; margin: 8px 0 0; }
+.codeinput { font-size: 26px; letter-spacing: 10px; text-align: center; }
+
+/* --------------------------------------------------------------- fields */
+
+.field { display: flex; flex-direction: column; gap: 5px; }
+
+.fieldlabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--faint);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+  width: 100%;
+}
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  outline: 2px solid var(--driver);
+  outline-offset: -1px;
+  border-color: transparent;
+}
+.field input:disabled,
+.field select:disabled { opacity: 0.6; cursor: not-allowed; }
+
+/* An unmatched entity is the most common reason a tag stops, so it is the
+   thing the eye should land on first. */
+.field--unresolved select { border-color: var(--attention); }
+
+.raw { font-size: 12px; color: var(--faint); font-style: italic; }
+
+.conf {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 999px;
+  letter-spacing: 0;
+}
+.conf--good { background: rgba(63, 191, 111, 0.18); color: var(--good); }
+.conf--attention { background: rgba(245, 166, 35, 0.18); color: var(--attention); }
+.conf--bad { background: rgba(229, 72, 77, 0.2); color: var(--bad); }
+
+/* ---------------------------------------------------------------- pills */
+
+.pill {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.pill--good { color: var(--good); border-color: var(--good); background: rgba(63,191,111,0.12); }
+.pill--attention { color: var(--attention); border-color: var(--attention); background: rgba(245,166,35,0.12); }
+.pill--bad { color: var(--bad); border-color: var(--bad); background: rgba(229,72,77,0.12); }
+.pill--pending { color: var(--pending); border-color: var(--pending); background: rgba(123,143,163,0.12); }
+
+.book { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; }
+.book--employee_driver { background: rgba(63,167,245,0.16); color: var(--driver); }
+.book--subhauler { background: rgba(245,166,35,0.16); color: var(--subhauler); }
+
+/* --------------------------------------------------------------- alerts */
+
+.alert {
+  border-left: 3px solid;
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin: 0;
+  font-size: 14px;
+}
+.alert strong { display: block; margin-bottom: 4px; }
+.alert p { margin: 0; }
+.alert ul { margin: 6px 0 0; padding-left: 18px; }
+.alert--bad { border-color: var(--bad); background: rgba(229,72,77,0.1); }
+.alert--attention { border-color: var(--attention); background: rgba(245,166,35,0.1); }
+.alert--good { border-color: var(--good); background: rgba(63,191,111,0.1); }
+
+/* ---------------------------------------------------------------- queue */
+
+.queue { padding: 24px; max-width: 1500px; width: 100%; margin: 0 auto; }
+.queue__head h1 { margin: 0 0 4px; font-size: 24px; }
+
+.filters { display: flex; gap: 12px; flex-wrap: wrap; margin: 20px 0 16px; }
+
+.segmented {
+  display: inline-flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.segmented button {
+  background: transparent;
+  border: 0;
+  color: var(--muted);
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.segmented button.on { background: var(--raised); color: var(--text); }
+
+.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.table th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--faint);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+}
+.table td { padding: 11px 12px; border-bottom: 1px solid var(--border); }
+.table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.row:hover { background: var(--surface); }
+
+/* A tag that needs a person is marked in the margin, so the eye can find the
+   blocking work without reading the status column. */
+.row--attention td:first-child { box-shadow: inset 3px 0 0 var(--attention); }
+
+.ticketlink { color: var(--driver); font-weight: 600; text-decoration: none; }
+.ticketlink:hover { text-decoration: underline; }
+.unmatched { color: var(--attention); font-style: italic; font-size: 13px; }
+.why { color: var(--muted); font-size: 13px; }
+.empty { color: var(--muted); padding: 48px 0; text-align: center; }
+
+/* --------------------------------------------------------------- review */
+
+.review {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(430px, 520px);
+  gap: 0;
+  flex: 1;
+  min-height: 0;
+}
+.review--loading { display: block; padding: 48px; }
+
+.review__image {
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  border-right: 1px solid var(--border);
+  min-height: 0;
+}
+
+.review__imagebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  flex: none;
+}
+
+.zoom { display: flex; align-items: center; gap: 6px; }
+.zoom button {
+  background: var(--raised);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  min-width: 30px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 13px;
+}
+.zoom span { min-width: 46px; text-align: center; color: var(--muted); font-size: 12px; }
+
+.review__canvas {
+  flex: 1;
+  overflow: auto;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  min-height: 0;
+}
+.review__canvas img {
+  max-width: 100%;
+  transform-origin: center;
+  transition: transform 0.12s ease;
+}
+
+.review__panel {
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--bg);
+  min-height: 0;
+}
+
+.review__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.review__header h1 { margin: 0 0 2px; font-size: 21px; }
+.review__header p { margin: 0; font-size: 13px; }
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.weights {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--surface);
+}
+.weights__row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.weights input { font-variant-numeric: tabular-nums; }
+
+.arith { margin: 0; font-size: 13px; }
+.arith--ok { color: var(--good); }
+.arith--warn { color: var(--attention); }
+.arith--bad { color: var(--bad); font-weight: 600; }
+
+.notes {
+  border-left: 3px solid var(--border);
+  padding-left: 12px;
+  font-size: 14px;
+}
+.notes p { margin: 4px 0 0; color: var(--muted); }
+
+.price {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--surface);
+}
+.price strong { display: block; font-size: 28px; font-variant-numeric: tabular-nums; }
+.price span.muted { font-size: 12px; }
+.price--ok strong { color: var(--good); }
+.price--missing strong { color: var(--attention); font-size: 18px; }
+
+.review__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  margin-top: auto;
+  position: sticky;
+  bottom: -20px;
+  background: var(--bg);
+  padding-bottom: 4px;
+}
+
+/* ---------------------------------------------------------------- modal */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(4, 8, 12, 0.72);
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  z-index: 50;
+}
+.modal__body {
+  width: min(480px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.modal__body h2 { margin: 0; font-size: 20px; }
+.modal__body p.muted { margin: 0; font-size: 13px; }
+.modal__actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+.reasons { display: flex; flex-direction: column; gap: 6px; }
+.reason {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+.reason--on { border-color: var(--attention); background: rgba(245, 166, 35, 0.1); }
+
+/* --------------------------------------------------------- narrow screens */
+/* Below this the side-by-side comparison stops working, so the panels stack
+   with the photo first — you still read the ticket before the form. */
+
+@media (max-width: 1080px) {
+  .review { grid-template-columns: 1fr; }
+  .review__image { border-right: 0; border-bottom: 1px solid var(--border); }
+  .review__canvas { max-height: 55vh; }
+  .fields { grid-template-columns: 1fr; }
+}
+
+/* -------------------------------------------------------------- periods */
+
+.periods { padding: 24px; max-width: 1500px; width: 100%; margin: 0 auto; }
+
+.closebar {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin: 20px 0;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.closebar .field { min-width: 170px; }
+.closebar .btn { height: 42px; }
+
+/* The two books, side by side and colour-separated. Seeing payroll and AP as
+   two totals rather than one is the whole point of the payee split. */
+.books { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+
+.bookcard {
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  border-radius: var(--radius);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--surface);
+}
+.bookcard strong { font-size: 30px; font-variant-numeric: tabular-nums; }
+.bookcard span.muted { font-size: 12px; }
+.bookcard--employee_driver { border-left-color: var(--driver); }
+.bookcard--employee_driver strong { color: var(--driver); }
+.bookcard--subhauler { border-left-color: var(--subhauler); }
+.bookcard--subhauler strong { color: var(--subhauler); }
+
+.sectionhead {
+  font-size: 18px;
+  margin: 32px 0 12px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.rowactions { display: flex; gap: 6px; justify-content: flex-end; }
+.rowactions .btn { padding: 5px 12px; font-size: 13px; }
+
+@media (max-width: 720px) {
+  .books { grid-template-columns: 1fr; }
+}
+
+/* --------------------------------------------------------- raw OCR text
+   What the phone actually recognised, shown on request.
+
+   Monospaced and pre-wrapped, because it is a transcript of a monospaced
+   printout — proportional type makes columns that lined up on the ticket stop
+   lining up on screen, and the alignment is part of what a reviewer is reading
+   it for. Height-capped so it can never push the photo off screen; the photo
+   is the thing being reviewed. Selectable, because copying a ticket number out
+   of here is faster than retyping it. */
+.ocr-dump {
+  margin: 12px 0;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.ocr-dump > strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+
+.ocr-dump pre {
+  margin: 0;
+  max-height: 340px;
+  overflow: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  white-space: pre-wrap;
+  word-break: break-word;
+  user-select: text;
+}
+
+/* ------------------------------------------------------------------ rates
+   The rate book.
+
+   Laid out to make three things about the schema unmissable, because each one
+   costs money quietly when it is misread: the two books never mix, a blank
+   scope means "any", and rows are in resolution order rather than alphabetical
+   order. */
+.rates {
+  padding: 24px 32px 64px;
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rates .segmented { align-self: flex-start; }
+
+/* The count of live rates in each book, on the tab itself. A book with zero
+   is the reason approvals are being held, and that should be visible before
+   anyone clicks into it. */
+.rates .segmented button em {
+  font-style: normal;
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 20px;
+  background: var(--bg);
+  color: var(--faint);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.rates .segmented button.on em { color: var(--text); }
+
+.rates .table td { vertical-align: top; }
+
+/* The scope cell carries the most information per pixel on this page, so it
+   gets room to breathe and the wildcard half is deliberately quiet. */
+.rates .table td em {
+  font-style: normal;
+  font-size: 12px;
+}
+
+.rates .sectionhead:first-of-type { margin-top: 8px; }
+
+/* --------------------------------------------------------------- tester
+   "What would this load pay?" — set apart from the book above it, because it
+   changes nothing and should not look like it might. */
+.tester {
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tester .sectionhead {
+  margin: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.tester .fields { grid-template-columns: repeat(3, 1fr); }
+.tester .btn { align-self: flex-start; }
+
+@media (max-width: 900px) {
+  .rates { padding: 16px; }
+  .tester .fields { grid-template-columns: 1fr 1fr; }
+}

@@ -1,0 +1,48 @@
+{
+  "name": "@tagsnap/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "typecheck": "tsc --noEmit",
+    "build:ios": "eas build --platform ios --profile production",
+    "build:android": "eas build --platform android --profile production",
+    "build:preview": "eas build --platform all --profile preview"
+  },
+  "dependencies": {
+    "@react-native-community/netinfo": "11.4.1",
+    "@react-navigation/bottom-tabs": "^7.2.0",
+    "@react-navigation/native": "^7.0.14",
+    "@react-navigation/native-stack": "^7.2.0",
+    "@supabase/supabase-js": "^2.47.10",
+    "expo": "~52.0.27",
+    "expo-camera": "~16.0.14",
+    "expo-constants": "~17.0.5",
+    "expo-crypto": "~14.0.2",
+    "expo-device": "~7.0.2",
+    "expo-file-system": "~18.0.7",
+    "expo-image-manipulator": "~13.0.6",
+    "expo-local-authentication": "~15.0.2",
+    "expo-location": "~18.0.5",
+    "expo-network": "~7.0.5",
+    "expo-notifications": "~0.29.13",
+    "expo-secure-store": "~14.0.1",
+    "expo-splash-screen": "~0.29.20",
+    "expo-sqlite": "~15.0.6",
+    "expo-status-bar": "~2.0.1",
+    "react": "18.3.1",
+    "react-native": "0.76.6",
+    "react-native-safe-area-context": "4.12.0",
+    "react-native-screens": "~4.4.0",
+    "react-native-url-polyfill": "^2.0.0",
+    "@tagsnap/shared": "*"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.2",
+    "@types/react": "~18.3.12",
+    "typescript": "~5.3.3"
+  }
+}
