@@ -671,23 +671,23 @@ enum ScaleTicketParser {
     /// typed in, and one correction teaches `learn_alias()` the vendor's
     /// printed name for every future ticket.
     private static func headerQuarry(_ lines: [Prepared]) -> Hit<String>? {
-        let header = lines.filter {
-            $0.box.minY < 0.25
-                && $0.norm.count >= 4
-                && $0.norm.filter(\.isLetter).count >= 3
-                && !Lexicon.headerNoise.contains(where: { noise in $0.norm.contains(noise) })
+        let header = lines.filter { line in
+            line.box.minY < 0.25
+                && line.norm.count >= 4
+                && line.norm.filter(\.isLetter).count >= 3
+                && !Lexicon.headerNoise.contains(where: { noise in line.norm.contains(noise) })
         }
 
-        guard let chosen = header.max(by: {
-            $0.box.height == $1.box.height
-                ? $0.box.minY > $1.box.minY
-                : $0.box.height < $1.box.height
+        guard let chosen = header.max(by: { a, b in
+            a.box.height == b.box.height
+                ? a.box.minY > b.box.minY
+                : a.box.height < b.box.height
         }) else { return nil }
 
         let score = min(heuristicCeiling, chosen.conf * 0.8)
 
         return Hit(
-            value: String(chosen.raw.trimmingCharacters(in: .whitespaces).prefix(80)),
+            value: String(chosen.raw.trimmingCharacters(in: CharacterSet.whitespaces).prefix(80)),
             confidence: score,
             trace: Trace(
                 field: TicketField.quarryText.rawValue,
