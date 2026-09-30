@@ -36,3 +36,7 @@ Thumbs.db
 
 # parser test bundle
 packages/shared/.test-build/
+
+# swarm company per-cycle output (regenerate with `swarm company`)
+company/board.md
+company/*-[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9].md
