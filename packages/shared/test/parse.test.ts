@@ -342,3 +342,66 @@ test('an empty read is refused before it is submitted', () => {
   assert.equal(isWorthSubmitting(page(['A', 'B'])), false);
   assert.equal(isWorthSubmitting(CLEAN_TONS), true);
 });
+
+// ------------------------------------------- worse handwriting, same safety
+//
+// Handwriting varies a lot and the OCR text gets messier than a dot-matrix
+// print. These lock in two things at once: the parser reads more of that mess
+// correctly, and it still refuses to invent a value rather than guess one.
+
+test('letters standing in for digits are read across all three weights', () => {
+  // Heavy OCR damage on every weight, but the three still agree arithmetically:
+  // 7B.42 -> 78.42, 3O.1O -> 30.10, 4B.32 -> 48.32, and 78.42 - 30.10 = 48.32.
+  const { parsed } = parseScaleTicket(
+    page([
+      'VULCAN MATERIALS COMPANY',
+      'TICKET NO 0245871',
+      'DATE 08/25/2026',
+      'GROSS WT 7B.42 TON',
+      'TARE WT 3O.1O TON',
+      'NET WT 4B.32 TON',
+    ])
+  );
+
+  assert.equal(parsed.gross_tons.value, 78.42);
+  assert.equal(parsed.tare_tons.value, 30.1);
+  assert.equal(parsed.net_tons.value, 48.32);
+  // The output shape a reviewer and the server depend on is unchanged.
+  assert.equal(parsed.is_scale_ticket, true);
+});
+
+test('a crossed 7 read as T and an open 4 read as A are repaired in a weight', () => {
+  const t = parseScaleTicket(
+    page(['TICKET NO 1', 'DATE 05/05/2026', 'NET WT T7.50 TON'])
+  );
+  assert.equal(t.parsed.net_tons.value, 77.5); // T -> 7
+
+  const a = parseScaleTicket(
+    page(['TICKET NO 1', 'DATE 05/05/2026', 'NET WT A1.20 TON'])
+  );
+  assert.equal(a.parsed.net_tons.value, 41.2); // A -> 4
+});
+
+test('a T-for-7 repair costs confidence, like any repair', () => {
+  const clean = parseScaleTicket(
+    page(['TICKET NO 1', 'DATE 05/05/2026', 'NET WT 71.50 TON'])
+  );
+  const damaged = parseScaleTicket(
+    page(['TICKET NO 1', 'DATE 05/05/2026', 'NET WT T1.50 TON'])
+  );
+
+  assert.equal(damaged.parsed.net_tons.value, 71.5);
+  assert.ok(
+    damaged.confidence.net_tons! < clean.confidence.net_tons!,
+    'a repaired digit must still weaken the field, even a handwriting one'
+  );
+});
+
+test('a token of only look-alike letters is never read as a weight', () => {
+  // TOA is three digit-look-alike letters (T, O, A) with no actual digit. It
+  // must stay null rather than become a plausible number — null over guess.
+  const { parsed } = parseScaleTicket(
+    page(['TICKET NO 9', 'DATE 05/05/2026', 'NET WT TOA TON'])
+  );
+  assert.equal(parsed.net_tons.value, null);
+});

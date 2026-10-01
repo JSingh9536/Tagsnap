@@ -38,9 +38,11 @@ const DIGIT_FOR_LETTER: Record<string, string> = {
   L: '1',
   '|': '1',
   Z: '2',
+  A: '4', // an open-top handwritten 4 reads as A; only ever fired inside a numeric token
   S: '5',
-  B: '8',
   G: '6',
+  T: '7', // a crossed handwritten 7 reads as T; same gate — never applied to a word
+  B: '8',
 };
 
 /**
@@ -83,7 +85,7 @@ export interface NumberRead {
   decimals: number;
 }
 
-const NUMBER_SHAPE = /^[0-9OQDILZSBG|,. ]+$/;
+const NUMBER_SHAPE = /^[0-9OQDILZSBGAT|,. ]+$/;
 
 /**
  * Read one token as a number.
