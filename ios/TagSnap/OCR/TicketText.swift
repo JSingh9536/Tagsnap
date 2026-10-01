@@ -35,7 +35,7 @@ enum TicketText {
     private static let digitForLetter: [Character: Character] = [
         "O": "0", "Q": "0", "D": "0",
         "I": "1", "L": "1", "|": "1",
-        "Z": "2", "S": "5", "B": "8", "G": "6",
+        "Z": "2", "A": "4", "S": "5", "G": "6", "T": "7", "B": "8",
     ]
 
     struct Repair {
@@ -77,7 +77,7 @@ enum TicketText {
     }
 
     private static let numberShape = try! NSRegularExpression(
-        pattern: "^[0-9OQDILZSBG|,. ]+$"
+        pattern: "^[0-9OQDILZSBGAT|,. ]+$"
     )
 
     /// Read one token as a number.
