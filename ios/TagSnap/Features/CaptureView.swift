@@ -273,7 +273,7 @@ struct CaptureView: View {
                     "trace": $0.trace.map(\.json),
                     "weight_unit": $0.weightUnit ?? NSNull(),
                     "line_count": recognised?.lines.count ?? 0,
-                ])
+                ] as [String: Any])
             },
             ocrText: recognised?.text,
             ocrMs: recognised?.ms ?? 0,
