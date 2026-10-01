@@ -194,7 +194,7 @@ fun TagDetailScreen(state: AppState, tagId: String, onBack: () -> Unit) {
                     Image(
                         bitmap = bitmap.asImageBitmap(),
                         contentDescription = "The ticket photo",
-                        contentScale = ContentScale.FitWidth,
+                        contentScale = ContentScale.FillWidth,
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(TagSnapColors.surface, RoundedCornerShape(12.dp))
